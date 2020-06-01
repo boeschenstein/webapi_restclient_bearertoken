@@ -17,7 +17,7 @@ namespace WebAPIClient
         //private static readonly HttpClient clientPost = new HttpClient();
         //private static readonly HttpClient clientPut = new HttpClient();
 
-        public async Task GetDataAsync(int rangeStart, int rangeEnd)
+        public async Task GetDataAsync(string token)
         {
             //const string uri = "http://localhost:40274/WeatherForecast?rangeStart=1&rangeEnd=4";
 
@@ -26,8 +26,7 @@ namespace WebAPIClient
 
             //client.DefaultRequestHeaders.Add("User-Agent", "My Test Client ");
 
-            //string token = "todo";
-            //client.DefaultRequestHeaders.Add("Authentication", $"Bearer {token}");
+            clientGet.DefaultRequestHeaders.Add("Authentication", $"Bearer {token}");
 
             // GET
 
