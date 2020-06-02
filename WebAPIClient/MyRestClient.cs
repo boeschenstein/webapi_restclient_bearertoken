@@ -11,28 +11,21 @@ namespace WebAPIClient
 {
     public class MyRestClient
     {
-        private static readonly HttpClient clientGet = new HttpClient();
-        private static readonly HttpClient clientPost = clientGet;
-        private static readonly HttpClient clientPut = clientGet;
-        //private static readonly HttpClient clientPost = new HttpClient();
-        //private static readonly HttpClient clientPut = new HttpClient();
+        private static readonly HttpClient httpClient = new HttpClient();
 
         public async Task GetDataAsync(string token)
         {
             //const string uri = "http://localhost:40274/WeatherForecast?rangeStart=1&rangeEnd=4";
 
-            //client.DefaultRequestHeaders.Accept.Clear();
-            //client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
-
-            //client.DefaultRequestHeaders.Add("User-Agent", "My Test Client ");
-
-            clientGet.DefaultRequestHeaders.Add("Authentication", $"Bearer {token}");
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            // clientGet.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // GET
 
-            UriBuilder builderGet = new UriBuilder("http://localhost:5000/WeatherForecast");
+            UriBuilder builderGet = new UriBuilder("https://localhost:5001/WeatherForecast");
             builderGet.Query = "rangeStart=1&rangeEnd=3";
-            var responseGet = await clientGet.GetAsync(builderGet.Uri);
+            var responseGet = await httpClient.GetAsync(builderGet.Uri);
             responseGet.EnsureSuccessStatusCode();
             //string responseBodyGet = await responseGet.Content.ReadAsStringAsync();
             using var responseStreamGet = await responseGet.Content.ReadAsStreamAsync();
@@ -41,9 +34,10 @@ namespace WebAPIClient
 
             // POST
 
-            UriBuilder builderPost = new UriBuilder("http://localhost:5000/WeatherForecast");
+            UriBuilder builderPost = new UriBuilder("https://localhost:5001/WeatherForecast");
             builderPost.Query = "rangeStart=1&rangeEnd=4";
-            var responsePost = await clientPost.PostAsync(builderPost.Uri, null);
+
+            var responsePost = await httpClient.PostAsync(builderPost.Uri, null);
             responsePost.EnsureSuccessStatusCode();
             //string responseBodyPost = await responsePost.Content.ReadAsStringAsync();
             using var responseStreamPost = await responsePost.Content.ReadAsStreamAsync();
@@ -52,7 +46,7 @@ namespace WebAPIClient
 
             // PUT
 
-            UriBuilder builderPut = new UriBuilder("http://localhost:5000/WeatherForecast");
+            UriBuilder builderPut = new UriBuilder("https://localhost:5001/WeatherForecast");
             //builderPut.Query = "rangeStart=1&rangeEnd=6";
             //var responsePut = await clientPut.PutAsync(builderPut.Uri, null);
             ////responsePut.EnsureSuccessStatusCode();
@@ -63,12 +57,12 @@ namespace WebAPIClient
 
             // PUT withArgumentsClass
 
-            UriBuilder builderPutWithArgumentsClass = new UriBuilder("http://localhost:5000/WeatherForecast");
+            UriBuilder builderPutWithArgumentsClass = new UriBuilder("https://localhost:5001/WeatherForecast");
 
             var args = new WebAPIBase.Controllers.PutArguments { RangeEnd = 2, RangeStart = 3 };
             var argsJson = JsonSerializer.Serialize(args);
             var content = new StringContent(argsJson.ToString(), Encoding.UTF8, "application/json");
-            var responsePutWithArgumentsClass = await clientPut.PutAsync(builderPut.Uri, content);
+            var responsePutWithArgumentsClass = await httpClient.PutAsync(builderPut.Uri, content);
             responsePutWithArgumentsClass.EnsureSuccessStatusCode();
             // string responseBodyPut = await responsePut.Content.ReadAsStringAsync();
             using var responseStreamPutWithArgumentsClass = await responsePutWithArgumentsClass.Content.ReadAsStreamAsync();

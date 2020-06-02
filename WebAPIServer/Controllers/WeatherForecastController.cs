@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -26,6 +26,8 @@ namespace WebAPIBase.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Get(int rangeStart, int rangeEnd)
         {
+            // curl -X GET "https://localhost:5001/TestArguments?rangeStart=1&rangeEnd=4" -H "accept: text/plain"
+
             if (rangeStart == 0) rangeStart = 1;
             if (rangeEnd == 0) rangeEnd = 5;
 
@@ -40,9 +42,14 @@ namespace WebAPIBase.Controllers
             return ret;
         }
 
+        // [Authorize] // roles not checked: access
+        [Authorize(Roles = "TestRole1")] // role found in token: access
+        // [Authorize(Roles = "Test!Role1")] // role not in token: no access
         [HttpPost]
         public IEnumerable<WeatherForecast> Post(int rangeStart, int rangeEnd)
         {
+            // curl -X POST "https://localhost:5001/TestArguments?rangeStart=3&rangeEnd=6" -H "accept: text/plain"
+
             if (rangeStart == 0) rangeStart = 1;
             if (rangeEnd == 0) rangeEnd = 5;
 
