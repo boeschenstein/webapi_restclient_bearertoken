@@ -40,7 +40,7 @@ namespace WebAPIBase
         }
 
         /// <inheritdoc cref="IUserService"/>
-        public async Task<User> AuthenticateAsync(string username, string password)
+        public async Task<User> AuthenticateAsync(string username, string password, string audience)
         {
             try
             {
@@ -77,7 +77,8 @@ namespace WebAPIBase
                 {
                     Subject = new ClaimsIdentity(claims),
                     Expires = exp,
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                    Audience = audience
                 };
                 // Create and writ new JWT Token
                 var token = tokenHandler.CreateToken(tokenDescriptor);

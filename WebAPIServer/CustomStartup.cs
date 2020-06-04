@@ -41,7 +41,9 @@ namespace WebAPIServer
                         ValidateIssuerSigningKey = true,  // default = false
                         IssuerSigningKey = new SymmetricSecurityKey(key),
                         ValidateIssuer = false,
-                        ValidateAudience = false,
+                        ValidAudience = ".NET Core 3.1 Linux Client",
+                        ValidateAudience = true, // default = true
+
                         //ValidateActor = false,  // default = true
                         //ValidateLifetime = false,  // default = true
                         //ValidateTokenReplay = false, // default = true

@@ -14,15 +14,16 @@ namespace WebAPIClient
             Console.WriteLine("Creating Token now...");
 
             const string mySecret = "DO NOT TELL ANYONE";
-            IUserResolver userResolver = new UserResolver(); // todo: DependencyInjection in .NET Core Console App ?
+            IUserResolver userResolver = new UserResolver(); // todo: DependencyInjection in .NET Core Console App ? (add AutoFac)
 
             byte[] secret = Encoding.ASCII.GetBytes(mySecret);
             TimeSpan expirationTime = TimeSpan.FromHours(7.0);
             JwtUserService userService = new JwtUserService(userResolver, secret, expirationTime);
 
             string username = "abba";
-            string password = "waterloo";
-            User user = await userService.AuthenticateAsync(username, password);
+            string password = "<no password needed here>";
+            string audience = ".NET Core 3.1 Linux Client";
+            User user = await userService.AuthenticateAsync(username, password, audience);
 
             Console.WriteLine("... Token generated.");
 
