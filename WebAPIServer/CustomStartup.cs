@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -40,8 +42,11 @@ namespace WebAPIServer
                     {
                         ValidateIssuerSigningKey = true,  // default = false
                         IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidAudience = ".NET Core 3.1 Linux Client",
+
+                        ValidIssuer = "Linux Client",
+                        ValidateIssuer = true, // default = true
+
+                        ValidAudience = "Job Center",
                         ValidateAudience = true, // default = true
 
                         //ValidateActor = false,  // default = true
@@ -69,6 +74,24 @@ namespace WebAPIServer
                         },
                         OnTokenValidated = contex =>
                         {
+                            Console.WriteLine($"---- OnTokenValidated Start ----");
+                            Console.WriteLine($"Issuer: {contex.SecurityToken.Issuer}");
+                            JwtSecurityToken jwt = (JwtSecurityToken)contex.SecurityToken;
+                            foreach (Claim claim in jwt.Claims)
+                            {
+                                //Console.WriteLine($"Claim: {claim.Type}={claim.Value}");
+                                if (claim.Type == "role")
+                                {
+                                    Console.WriteLine($"Role:{claim.Value}");
+                                }
+                            }
+                            Console.WriteLine($"Subject: {jwt.Subject}");
+                            foreach (string audience in jwt.Audiences)
+                            {
+                                Console.WriteLine($"Audience:{audience}");
+                            }
+                            Console.WriteLine($"---- OnTokenValidated End ----");
+
                             return Task.CompletedTask;
                         },
                         OnChallenge = contex =>
