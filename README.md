@@ -86,3 +86,47 @@ Handler ()
         }
     }
 ```
+
+## HttpClient
+
+### Typed Client
+
+Typed Client: <https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-7.0#typed-clients>
+
+```c#
+// How to register HttpClient using a Service and Interface: https://stackoverflow.com/questions/56091875/ihttpclientfactory-in-asp-net-core-typed-clients
+services.AddHttpClient<ICheckPermissionClient, CheckPermissionClient>(c =>
+{
+    c.BaseAddress = new Uri("https://i-pfw.corproot.net");
+    c.DefaultRequestHeaders.Add("Accept", "application/json");
+    c.DefaultRequestHeaders.Add("User-Agent", "SMMS-PFW-Client");
+});
+services.AddTransient<ICheckPermission, CheckPermission>();
+```
+
+### Generate API using Swagger and NSwag
+
+- Get swagger file from REST Api
+- Install NSWag UI
+- Generate Client, using Swagger File
+    - name: CheckPermissionClient
+    - generate an interface: ICheckPermissionClient
+- Register HttpClient (code above)
+- Create a service:
+
+```c#
+public class CheckPermission : ICheckPermission
+{
+    private readonly ICheckPermissionClient client;
+
+    public CheckPermission(ICheckPermissionClient client)
+    {
+        this.client = client;
+    }
+    public async Task<bool> HavePermissionAsync(string myArguments)
+    {
+        var ret = await this.client.CheckPermissionsAsync(myArguments);
+        return ret;
+    }
+}
+```
